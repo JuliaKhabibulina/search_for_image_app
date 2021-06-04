@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ImageSearch</string>
+    <string name="search_hint">Input image tag for search </string>
+    <string name="no_results">No image found </string>
+    <string name="loading">Loading</string>
+    <string name="image_description">ResultImage</string>
 </resources>
