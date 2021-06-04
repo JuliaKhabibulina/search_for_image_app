@@ -1,4 +1,4 @@
-package com.orangesoft.imagesearch.tmp
+package com.orangesoft.imagesearch.model
 
 data class PhotosX(
     val page: Int,

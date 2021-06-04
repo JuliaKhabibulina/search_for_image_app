@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.orangesoft.imagesearch.R
-import com.orangesoft.imagesearch.model.ImageItem
+import com.orangesoft.imagesearch.model.Photo
 
 class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val title: TextView = view.findViewById(R.id.tv_title)
 
-    private var image: ImageItem? = null
+    private var image: Photo? = null
 
-    fun bind(image: ImageItem?) {
+    fun bind(image: Photo?) {
         if (image == null) {
             val resources = itemView.resources
             title.text = resources.getString(R.string.loading)
@@ -22,7 +22,7 @@ class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    private fun showImageData(image: ImageItem) {
+    private fun showImageData(image: Photo) {
         this.image = image
         title.text = image.title
 

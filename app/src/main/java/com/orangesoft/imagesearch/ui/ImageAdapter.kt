@@ -3,27 +3,27 @@ package com.orangesoft.imagesearch.ui
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.orangesoft.imagesearch.model.ImageItem
+import com.orangesoft.imagesearch.model.Photo
 
-class ImageAdapter : PagingDataAdapter<ImageItem, ImageViewHolder>(IMAGE_COMPARATOR) {
+class ImageAdapter : PagingDataAdapter<Photo, ImageViewHolder>(IMAGE_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val repoItem = getItem(position)
-        if (repoItem != null) {
-            holder.bind(repoItem)
+        val imageItem = getItem(position)
+        if (imageItem != null) {
+            holder.bind(imageItem)
         }
     }
 
     companion object {
-        private val IMAGE_COMPARATOR = object : DiffUtil.ItemCallback<ImageItem>() {
-            override fun areItemsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean =
+        private val IMAGE_COMPARATOR = object : DiffUtil.ItemCallback<Photo>() {
+            override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean =
                 oldItem.title == newItem.title
 
-            override fun areContentsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean =
+            override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean =
                 oldItem == newItem
         }
     }
