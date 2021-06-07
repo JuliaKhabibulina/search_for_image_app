@@ -8,7 +8,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:4.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
     }
 }
 
@@ -16,7 +15,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-
     }
 }
 
@@ -38,4 +36,5 @@ ext {
     retrofitVersion = '2.9.0'
     okhttpLoggingInterceptorVersion = '4.9.0'
     coroutines = '1.4.3'
+    glideVersion='4.12.0'
 }

@@ -1,6 +1,6 @@
 package com.orangesoft.imagesearch.model
 
-data class Photos(
-    val photos: PhotosX,
+data class ImageResponse(
+    val photos: Images,
     val stat: String
 )

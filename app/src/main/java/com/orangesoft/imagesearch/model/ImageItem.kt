@@ -1,6 +1,6 @@
 package com.orangesoft.imagesearch.model
 
-data class Photo(
+data class ImageItem(
     val id: String,
     val isfamily: Int,
     val isfriend: Int,
@@ -8,5 +8,6 @@ data class Photo(
     val owner: String,
     val secret: String,
     val server: String,
-    val title: String
+    val title: String,
+    val url_sq: String
 )

@@ -5,11 +5,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.orangesoft.imagesearch.api.ImageService
-import com.orangesoft.imagesearch.model.Photo
+import com.orangesoft.imagesearch.model.ImageItem
 import kotlinx.coroutines.flow.Flow
 
 class ImageRepository(private val service: ImageService) {
-    fun getSearchResultStream(query: String): Flow<PagingData<Photo>> {
+    fun getSearchResultStream(query: String): Flow<PagingData<ImageItem>> {
         Log.d("ImageRepository", "New query: $query")
         return Pager(
             config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),

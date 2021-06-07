@@ -6,21 +6,21 @@ import com.orangesoft.imagesearch.api.ImageService
 import retrofit2.HttpException
 import java.io.IOException
 import com.orangesoft.imagesearch.data.ImageRepository.Companion.NETWORK_PAGE_SIZE
-import com.orangesoft.imagesearch.model.Photo
+import com.orangesoft.imagesearch.model.ImageItem
 
 private const val STARTING_PAGE_INDEX = 1
 
 class ImagePagingSource(
     private val service: ImageService,
     private val query : String
-) : PagingSource<Int, Photo>() {
+) : PagingSource<Int, ImageItem>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo>{
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ImageItem>{
         val position = params.key ?: STARTING_PAGE_INDEX
 
         val apiQuery = query
         return try {
-            val response = service.searchImage(apiQuery )
+            val response = service.searchImage(apiQuery  )
             val image = response.photos
             val nextKey = if (image.photo.isEmpty()){
                 null
@@ -39,7 +39,7 @@ class ImagePagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Photo>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, ImageItem>): Int? {
         return state.anchorPosition?.let {anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.nextKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)

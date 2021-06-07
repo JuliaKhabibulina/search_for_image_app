@@ -1,6 +1,6 @@
 package com.orangesoft.imagesearch.api
 
-import com.orangesoft.imagesearch.model.Photos
+import com.orangesoft.imagesearch.model.ImageResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,10 +10,10 @@ import retrofit2.http.Query
 
 interface ImageService {
 
-    @GET("rest/?method=flickr.photos.search&api_key=949ec7f84f7fdec0da0b220473e4fbbf&format=json")
+    @GET("rest/?method=flickr.photos.search&media=photos&extras=url_sq&format=json&nojsoncallback=1&api_key=949ec7f84f7fdec0da0b220473e4fbbf&")
     suspend fun searchImage(
-        @Query("tags") tag: String
-    ): Photos
+        @Query("tags") tag: String,
+    ): ImageResponse
 
     companion object {
         private const val BASE_URL = "https://www.flickr.com/services/"
