@@ -14,7 +14,6 @@ import androidx.paging.LoadState
 import com.orangesoft.imagesearch.Injection
 import com.orangesoft.imagesearch.R
 import com.orangesoft.imagesearch.databinding.ActivitySearchImageBinding
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -34,7 +33,6 @@ class SearchImageActivity : AppCompatActivity() {
             .get(SearchImageViewModel::class.java)
 
         binding.imageQuery.requestFocus()
-        binding.retryButton.setOnClickListener { viewModel.adapter.retry() }
 
         binding.viewmodel=viewModel
 
@@ -112,8 +110,4 @@ class SearchImageActivity : AppCompatActivity() {
             binding.list.visibility = View.VISIBLE
         }
     }
-
-
-
-
 }

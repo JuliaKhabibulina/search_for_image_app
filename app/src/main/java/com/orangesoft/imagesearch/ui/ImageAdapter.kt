@@ -8,14 +8,11 @@ import com.orangesoft.imagesearch.model.ImageItem
 class ImageAdapter : PagingDataAdapter<ImageItem, ImageViewHolder>(IMAGE_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder.create(parent)
+        return ImageViewHolder(parent.context)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val imageItem = getItem(position)
-        if (imageItem != null) {
-            holder.bind(imageItem)
-        }
+        getItem(position)?.apply { holder.bind(this) }
     }
 
     companion object {
