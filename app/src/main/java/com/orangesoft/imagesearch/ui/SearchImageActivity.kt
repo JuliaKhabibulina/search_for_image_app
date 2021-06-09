@@ -1,9 +1,7 @@
 package com.orangesoft.imagesearch.ui
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -14,10 +12,9 @@ import androidx.paging.LoadState
 import com.orangesoft.imagesearch.Injection
 import com.orangesoft.imagesearch.R
 import com.orangesoft.imagesearch.databinding.ActivitySearchImageBinding
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 
 class SearchImageActivity : AppCompatActivity() {
 
@@ -33,18 +30,21 @@ class SearchImageActivity : AppCompatActivity() {
             .get(SearchImageViewModel::class.java)
 
         binding.imageQuery.requestFocus()
-
-        binding.viewmodel=viewModel
+        binding.viewmodel = viewModel
 
         initAdapter()
-        val query = binding.imageQuery.text.trim().toString()
-        initSearch(query)
+
+        viewModel.adapter.loadStateFlow
+            .distinctUntilChangedBy { it.refresh }
+            .filter { it.refresh is LoadState.NotLoading }
+            .launchIn(lifecycleScope)
     }
 
     private fun initAdapter() {
 
         viewModel.adapter.addLoadStateListener { loadState ->
-            val isListEmpty = loadState.refresh is LoadState.NotLoading && viewModel.adapter.itemCount == 0
+            val isListEmpty =
+                loadState.refresh is LoadState.NotLoading && viewModel.adapter.itemCount == 0
             showEmptyList(isListEmpty)
 
             binding.list.isVisible = loadState.source.refresh is LoadState.NotLoading
@@ -61,42 +61,6 @@ class SearchImageActivity : AppCompatActivity() {
                     "\uD83D\uDE28 Wooops ${it.error}",
                     Toast.LENGTH_LONG
                 ).show()
-            }
-        }
-    }
-
-    private fun initSearch(query: String) {
-        binding.imageQuery.setText(query)
-
-        binding.imageQuery.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_GO) {
-                updateRepoListFromInput()
-                true
-            } else {
-                false
-            }
-        }
-        binding.imageQuery.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                updateRepoListFromInput()
-                true
-            } else {
-                false
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.adapter.loadStateFlow
-                .distinctUntilChangedBy { it.refresh }
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { binding.list.scrollToPosition(0) }
-        }
-    }
-
-    private fun updateRepoListFromInput() {
-        binding.imageQuery.text.trim().let {
-            if (it.isNotEmpty()) {
-                viewModel.searchImage(binding.imageQuery.text.trim().toString())
             }
         }
     }

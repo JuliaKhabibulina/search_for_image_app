@@ -8,6 +8,8 @@
         <variable
             name="viewmodel"
             type="com.orangesoft.imagesearch.ui.SearchImageViewModel" />
+
+        <import type="android.view.inputmethod.EditorInfo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +43,8 @@
                 android:inputType="textNoSuggestions"
                 android:selectAllOnFocus="true"
                 android:text="@{viewmodel.currentQueryValue}"
+                app:action="@{viewmodel.runSearch}"
+                app:submitAction="@{viewmodel.runSearch}"
                 tools:text="Android" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -52,12 +56,12 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/recycle_margin_horizontal"
             android:layout_marginRight="@dimen/recycle_margin_horizontal"
+            android:adapter="@{viewmodel.adapter}"
             android:paddingVertical="@dimen/row_item_margin_vertical"
             android:scrollbars="vertical"
             app:layoutManager="GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:adapter = "@{viewmodel.adapter}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout"
             app:spanCount="@integer/cols_number"
@@ -78,8 +82,8 @@
             android:id="@+id/retry_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/retry"
             android:onClick="@{(view) -> viewmodel.adapter.refresh()"
+            android:text="@string/retry"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

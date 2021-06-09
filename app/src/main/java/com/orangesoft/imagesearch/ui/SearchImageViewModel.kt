@@ -16,7 +16,11 @@ class SearchImageViewModel(private val repository: ImageRepository) : ViewModel(
     private var searchJob: Job? = null
     val adapter = ImageAdapter()
 
-   fun searchImage(queryString: String) {
+    val runSearch: (String) -> Unit = { query ->
+        searchImage(query)
+    }
+
+    private fun searchImage(queryString: String) {
         if (searchJob?.isActive == true && queryString == currentQueryValue) {
             searchJob?.cancel("The same query")
         } else {
