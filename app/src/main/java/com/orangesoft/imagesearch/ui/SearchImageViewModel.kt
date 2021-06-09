@@ -1,29 +1,30 @@
 package com.orangesoft.imagesearch.ui
 
 import com.orangesoft.imagesearch.data.ImageRepository
-import com.orangesoft.imagesearch.model.ImageItem
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class SearchImageViewModel(private val repository: ImageRepository) : ViewModel() {
-    private var currentQueryValue: String? = null
+    var currentQueryValue: String = ""
+        private set
 
-    private var currentSearchResult: Flow<PagingData<ImageItem>>? = null
+    private var searchJob: Job? = null
+    val adapter = ImageAdapter()
 
-    fun searchImage(queryString: String): Flow<PagingData<ImageItem>> {
-        val lastResult = currentSearchResult
-        if (queryString == currentQueryValue && lastResult != null) {
-            return lastResult
+   fun searchImage(queryString: String) {
+        if (searchJob?.isActive == true && queryString == currentQueryValue) {
+            searchJob?.cancel("The same query")
+        } else {
+            currentQueryValue = queryString
+            searchJob = repository.getSearchResultStream(currentQueryValue)
+                .cachedIn(viewModelScope)
+                .onEach { adapter.submitData(it) }
+                .launchIn(viewModelScope)
         }
-        currentQueryValue = queryString
-        val newResult: Flow<PagingData<ImageItem>> = repository.getSearchResultStream(queryString)
-            .cachedIn(viewModelScope)
-        currentSearchResult = newResult
-        return newResult
     }
-
-
 }

@@ -24,8 +24,6 @@ class SearchImageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchImageBinding
     private lateinit var viewModel: SearchImageViewModel
-    private val adapter = ImageAdapter()
-    private var searchJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,23 +32,21 @@ class SearchImageActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory())
             .get(SearchImageViewModel::class.java)
+
         binding.imageQuery.requestFocus()
-        binding.retryButton.setOnClickListener { adapter.retry() }
+        binding.retryButton.setOnClickListener { viewModel.adapter.retry() }
+
+        binding.viewmodel=viewModel
 
         initAdapter()
-        val query = savedInstanceState?.getString(LAST_SEARCH_QUERY) ?: ""
+        val query = binding.imageQuery.text.trim().toString()
         initSearch(query)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(LAST_SEARCH_QUERY, binding.imageQuery.text.trim().toString())
-    }
-
     private fun initAdapter() {
-        binding.list.adapter = adapter
-        adapter.addLoadStateListener { loadState ->
-            val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
+
+        viewModel.adapter.addLoadStateListener { loadState ->
+            val isListEmpty = loadState.refresh is LoadState.NotLoading && viewModel.adapter.itemCount == 0
             showEmptyList(isListEmpty)
 
             binding.list.isVisible = loadState.source.refresh is LoadState.NotLoading
@@ -92,7 +88,7 @@ class SearchImageActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            adapter.loadStateFlow
+            viewModel.adapter.loadStateFlow
                 .distinctUntilChangedBy { it.refresh }
                 .filter { it.refresh is LoadState.NotLoading }
                 .collect { binding.list.scrollToPosition(0) }
@@ -102,7 +98,7 @@ class SearchImageActivity : AppCompatActivity() {
     private fun updateRepoListFromInput() {
         binding.imageQuery.text.trim().let {
             if (it.isNotEmpty()) {
-                search(it.toString())
+                viewModel.searchImage(binding.imageQuery.text.trim().toString())
             }
         }
     }
@@ -117,16 +113,7 @@ class SearchImageActivity : AppCompatActivity() {
         }
     }
 
-    private fun search(query: String) {
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchImage(query).collect {
-                adapter.submitData(it)
-            }
-        }
-    }
 
-    companion object {
-        private const val LAST_SEARCH_QUERY: String = "last_search_query"
-    }
+
+
 }

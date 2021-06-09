@@ -11,7 +11,6 @@ class ImageAdapter : PagingDataAdapter<ImageItem, ImageViewHolder>(IMAGE_COMPARA
         return ImageViewHolder.create(parent)
     }
 
-
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val imageItem = getItem(position)
         if (imageItem != null) {
