@@ -10,7 +10,7 @@ import retrofit2.http.Query
 
 interface ImageService {
 
-    @GET("rest/?method=flickr.photos.search&media=photos&extras=url_sq&format=json&nojsoncallback=1&api_key=949ec7f84f7fdec0da0b220473e4fbbf&")
+    @GET("rest/?method=flickr.photos.search&media=photos&extras=url_s&format=json&nojsoncallback=1&api_key=949ec7f84f7fdec0da0b220473e4fbbf&")
     suspend fun searchImage(
         @Query("tags") tag: String,
     ): ImageResponse

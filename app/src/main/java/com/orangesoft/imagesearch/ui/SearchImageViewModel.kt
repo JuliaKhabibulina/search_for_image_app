@@ -24,4 +24,6 @@ class SearchImageViewModel(private val repository: ImageRepository) : ViewModel(
         currentSearchResult = newResult
         return newResult
     }
+
+
 }

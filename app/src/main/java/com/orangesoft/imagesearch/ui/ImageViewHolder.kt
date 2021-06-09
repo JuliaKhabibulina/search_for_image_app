@@ -30,7 +30,7 @@ class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         title.text = image.title
 
         Glide.with(context)
-            .load(image.url_sq)
+            .load(image.url_s)
             .into(photo)
     }
 

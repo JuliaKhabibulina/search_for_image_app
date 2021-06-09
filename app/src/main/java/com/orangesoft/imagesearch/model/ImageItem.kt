@@ -9,5 +9,5 @@ data class ImageItem(
     val secret: String,
     val server: String,
     val title: String,
-    val url_sq: String
+    val url_s: String
 )
