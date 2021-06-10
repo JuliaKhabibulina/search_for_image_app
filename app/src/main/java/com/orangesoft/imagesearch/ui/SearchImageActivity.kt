@@ -15,6 +15,7 @@ import com.orangesoft.imagesearch.databinding.ActivitySearchImageBinding
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class SearchImageActivity : AppCompatActivity() {
 
@@ -32,37 +33,26 @@ class SearchImageActivity : AppCompatActivity() {
         binding.imageQuery.requestFocus()
         binding.viewmodel = viewModel
 
-        initAdapter()
-
         viewModel.adapter.loadStateFlow
             .distinctUntilChangedBy { it.refresh }
-            .filter { it.refresh is LoadState.NotLoading }
-            .launchIn(lifecycleScope)
-    }
+            .onEach { state ->
+                when (state.refresh) {
+                    is LoadState.Error -> {
+                        showEmptyList(true)
+                        binding.list.isVisible = state.source.refresh is LoadState.NotLoading
+                        binding.progressBar.isVisible = state.source.refresh is LoadState.Loading
+                        binding.retryButton.isVisible = state.source.refresh is LoadState.Error
+                    }
 
-    private fun initAdapter() {
-
-        viewModel.adapter.addLoadStateListener { loadState ->
-            val isListEmpty =
-                loadState.refresh is LoadState.NotLoading && viewModel.adapter.itemCount == 0
-            showEmptyList(isListEmpty)
-
-            binding.list.isVisible = loadState.source.refresh is LoadState.NotLoading
-            binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-            binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
-
-            val errorState = loadState.source.append as? LoadState.Error
-                ?: loadState.source.prepend as? LoadState.Error
-                ?: loadState.append as? LoadState.Error
-                ?: loadState.prepend as? LoadState.Error
-            errorState?.let {
-                Toast.makeText(
-                    this,
-                    "\uD83D\uDE28 Wooops ${it.error}",
-                    Toast.LENGTH_LONG
-                ).show()
+                    else -> {
+                        showEmptyList(false)
+                        binding.list.isVisible = state.source.refresh is LoadState.NotLoading
+                        binding.progressBar.isVisible = state.source.refresh is LoadState.Loading
+                        binding.retryButton.isVisible = state.source.refresh is LoadState.Error
+                    }
+                }
             }
-        }
+           .launchIn(lifecycleScope)
     }
 
     private fun showEmptyList(show: Boolean) {
