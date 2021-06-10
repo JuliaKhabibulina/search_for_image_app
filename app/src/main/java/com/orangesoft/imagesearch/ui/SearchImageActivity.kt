@@ -12,10 +12,7 @@ import androidx.paging.LoadState
 import com.orangesoft.imagesearch.Injection
 import com.orangesoft.imagesearch.R
 import com.orangesoft.imagesearch.databinding.ActivitySearchImageBinding
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 class SearchImageActivity : AppCompatActivity() {
 
@@ -38,30 +35,28 @@ class SearchImageActivity : AppCompatActivity() {
             .onEach { state ->
                 when (state.refresh) {
                     is LoadState.Error -> {
-                        showEmptyList(true)
-                        binding.list.isVisible = state.source.refresh is LoadState.NotLoading
-                        binding.progressBar.isVisible = state.source.refresh is LoadState.Loading
-                        binding.retryButton.isVisible = state.source.refresh is LoadState.Error
+                        showEmptyList(true, state.source.refresh)
                     }
-
                     else -> {
-                        showEmptyList(false)
-                        binding.list.isVisible = state.source.refresh is LoadState.NotLoading
-                        binding.progressBar.isVisible = state.source.refresh is LoadState.Loading
-                        binding.retryButton.isVisible = state.source.refresh is LoadState.Error
+                        showEmptyList(false, state.source.refresh)
                     }
                 }
             }
-           .launchIn(lifecycleScope)
+            .launchIn(lifecycleScope)
     }
 
-    private fun showEmptyList(show: Boolean) {
+    private fun showEmptyList(show: Boolean, loadState: LoadState) {
         if (show) {
             binding.emptyList.visibility = View.VISIBLE
             binding.list.visibility = View.GONE
         } else {
             binding.emptyList.visibility = View.GONE
             binding.list.visibility = View.VISIBLE
+            binding.list.scrollToPosition(0)
         }
+
+        binding.list.isVisible = loadState is LoadState.NotLoading
+        binding.progressBar.isVisible = loadState is LoadState.Loading
+        binding.retryButton.isVisible = loadState is LoadState.Error
     }
 }
